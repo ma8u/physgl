@@ -1,0 +1,24 @@
+drop database physgl;
+create database physgl;
+use physgl;
+
+
+create table code (
+	code_id int not null auto_increment,
+	user_hash text,
+	file_name text,
+	code_hash text,
+	share_hash text,
+	code text,
+	date timestamp,
+	primary key(code_id)
+);
+
+create table user (
+	user_id int not null auto_increment,
+	user_name text,
+	auth_hash text,
+	user_hash text,
+	primary key(user_id)
+);
+
