@@ -1,7 +1,8 @@
-﻿PhysGL
+PhysGL
 
+Quick Start for the Impatient 
 
-Quick Start for the Impatient PhysGL is a browser-based scripting language and
+PhysGL is a browser-based scripting language and
 development environment for quickly creating 3D computer graphics scenes, and/or
 animation.  With your WebGL-enabled browser is pointing to a PhysGL installation
 (see physgl.org), you should see the main development screen, which consists of
@@ -9,11 +10,9 @@ a code-editor to the left and a gray graphics-output window to the right. You
 should be able to see a “Run” button under the code editor.
 
 
-Into the editor, type this single line
-
+Into the code editor, type this single line
 
 draw_sphere(<0,0,0>,15,"red")
-
 
 then click the “run” button.  You should see a red sphere appear at the center
 of the screen (x=0, y=0, z=0) with a radius of 15 pixels.  If you change the
@@ -136,6 +135,7 @@ draw_axes(scale-scalar[,persist]) - draw the x-y-z coordinate axes with a zoom f
 
 
 Installation
+
 To use PhyGL, you need to have a “LAMP” (Linux, Apache, MySql, Php) or
 equivalent server available.  In your allocated web-space, unzip the physgl.zip
 file.  PhysGL was written using the “Codeigniter” framework, so it is very
