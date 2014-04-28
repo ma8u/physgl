@@ -80,11 +80,18 @@ function ToPrefix_infix_to_prefix(expr)
 	var i=0;
 	var out = expr;
 	var ret;
+	var sq, dq;
 	
 	
+	sq = dq = false;
 	while(i < out.length)
 	{
-		if (out[i] == '^')
+		if (out[i] == '\'') sq = !sq;
+		if (out[i] == '"') dq = !dq;
+		if (i < out.length-1 && out[i] == '/' && out[i+1] == '/')
+			break;
+			
+		if (out[i] == '^' && !dq && !sq)
 			{
 				ret = ToPrefix_get_operands(out,i);
 				out = ToPrefix_replace_chunk(out,ret.start,ret.end,'ToPrefix_power('+ret.left+','+ret.right+')');
@@ -94,9 +101,15 @@ function ToPrefix_infix_to_prefix(expr)
 	}
 	
 	i = 0;
+	sq = dq = false;
 	while(i < out.length)
 	{
-		if (out[i] == '*' || out[i] == '/')
+		if (out[i] == '\'') sq = !sq;
+		if (out[i] == '"') dq = !dq;
+		if (i < out.length-1 && out[i] == '/' && out[i+1] == '/')
+			break;
+		
+		if ((out[i] == '*' || out[i] == '/') && (!sq && !dq))
 			{
 				ret = ToPrefix_get_operands(out,i);
 				if (out[i] == '*')
@@ -110,9 +123,14 @@ function ToPrefix_infix_to_prefix(expr)
 	
 	
 	i = 0;
+	sq = dq = false;
 	while(i < out.length)
 	{
-		if (out[i] == '+' || out[i] == '-')
+		if (out[i] =='\'') sq = !sq;
+		if (out[i] == '"') dq = !dq;
+		if (i < out.length-1 && out[i] == '/' && out[i+1] == '/')
+			break;
+		if ((out[i] == '+' || out[i] == '-') && (!sq && !dq))
 			{
 				ret = ToPrefix_get_operands(out,i);
 				if (ret.left == '')
@@ -155,6 +173,8 @@ function ToPrefix_power(x,y)
 {
 	if (ToPrefix_isScalar(x) && ToPrefix_isScalar(y))
 		return(Math.pow(x,y));
+	if (ToPrefix_isVector(x) && y == '2')
+		return(x[0] * x[0] + x[1] * x[1] + x[2] * x[2]);
 	else return({result: 'Exponents may only be taken of scalars.', type: 'error'});
 }
 
@@ -226,6 +246,7 @@ function ToPrefix_token_vectors(input)
 	var key;
 	var comma_count;
 	
+	
 	str = input.expr;
 	len = str.length;
 	vect = input.vect;
@@ -235,13 +256,16 @@ function ToPrefix_token_vectors(input)
 		
 	for(i=0;i<str.length;i++)
 		{
-			if (str[i] == '<' && in_vector == false)
+			if (i < str.length-1 && str[i] == '/' && str[i+1] == '/')
+				break;
+				
+			if (str[i] == '<' && str[i+1] != '>' && str[i+1] != '=' && in_vector == false)
 				{
 					in_vector = true;
 					open_pos = i;
 					comma_count = 0;
 				}
-			if (str[i] == '<' && in_vector == true && i > open_pos)
+			if (str[i] == '<' && str[i+1] != '>' && in_vector == true && i > open_pos)
 				in_vector = false;
 			
 			if (in_vector == true && str[i] == ',')
@@ -288,6 +312,7 @@ function ToPrefix_token_paren(input)
 	var dl;
 	var f;
 	var key;
+	var dq, sq;
 	
 	str = input.expr;
 	len = str.length;
@@ -296,25 +321,40 @@ function ToPrefix_token_paren(input)
 	if (str.indexOf('(') == -1 && str.indexOf(')') == -1)
 		return({expr: str, paren: paren});
 		
+	open = close = -1;
+	dq = sq = false;
 	for(i=0;i<str.length;i++)
 		{
-			if (str[i] == '(')
+			if (str[i] == "'")
+				sq = !sq;
+			if (str[i] == '"')
+				dq = !dq;
+			if (i < str.length-1 && str[i] == '/' && str[i+1] == '/')
+				break;
+			
+			if (!dq && !sq)
 				{
-					pc++;
-					open_pos = i;
-				}
-			if (pc && str[i] == ')')
-				{
-					pc--;
-					dl = i - open_pos;
-					if (dl < len)
+					if (str[i] == '(')
 						{
-							open = open_pos;
-							close = i;
-							len = dl;
+							pc++;
+							open_pos = i;
+						}
+					if (pc && str[i] == ')')
+						{
+							pc--;
+							dl = i - open_pos;
+							if (dl < len)
+								{
+									open = open_pos;
+									close = i;
+									len = dl;
+								}
 						}
 				}
 		}
+	if (open == -1 && close == -1)
+		return({expr: str, paren: paren});
+		
 	key = '__paren'+paren.length;
 	f = ToPrefix_see_if_func(str,open);
 	paren.push(str.substr(open+1,close-open-1)+','+f);

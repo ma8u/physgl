@@ -4,9 +4,19 @@ include('config_paths.php');
 
 echo "<div id=\"wrapper\">";
 echo "<h1>Create an Account</h1>";
+
+echo <<<EOT
+
+The code editor on PhysGL is in "read-only" mode for anonymous users.  Using
+PhysGL with your own account allows you to create graphics programs, which are
+saved "in the cloud" (i.e. on our server) for future use and access.  Each of
+your programs also has a "share" link, allowing you to share your programs with
+others.
+
+EOT;
 echo form_open("welcome/incoming_account");
 
-$publickey = "--recaptcha public key--"; // you got this from the signup page
+$publickey = "6LeTGNsSAAAAACOCCdVsTP2P3YI-8U-OGT-KxgXf"; // you got this from the signup page
 
 //echo validation_errors();
 

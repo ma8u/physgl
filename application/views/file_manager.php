@@ -8,7 +8,11 @@ if ($user_hash == 'none')
 		anchor("welcome/","Return");
 		return;
 	}
+	
+if (!empty($msg))
+	echo "<div id=\"message\">$msg</div><p/>";
 
+echo "<div id=\"filemanager\">";
 echo "<h2>Your files</h2>";	
 echo anchor("welcome/new_project/","New project");
 echo "<p/>";
@@ -16,9 +20,13 @@ echo "<div id=\"file_list\">";
 echo $this->Files->get_file_list($user_hash);
 echo "</div>";
 
+echo "<div id=\"buttons\"></div>";
+
+echo "</div>";
+
 ?>
 
-<div id="buttons"></div>
+
 
 <script>
 

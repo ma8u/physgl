@@ -1,6 +1,7 @@
 function _PHYSGL_paren_balance(code)
 {
 	var dq = false, sq = false, pc = 0;
+	var in_comment = false;
 	var i;
 	
 	for(i=0;i<code.length;i++)
@@ -9,9 +10,13 @@ function _PHYSGL_paren_balance(code)
 				sq = !sq;
 			if (code[i] == '"')
 				dq = !dq;
-			if (!sq && !dq && code[i] == '(')
+			if (i < code.length-1 && code[i] == '/' && code[i+1] == '/')
+				in_comment = true;
+			if (in_comment == true && (code[i] == '\n' || code[i] == '\r'))
+				in_comment = false;
+			if (!sq && !dq && !in_comment && code[i] == '(')
 				pc++;
-			if (!sq && !dq && code[i] == ')')
+			if (!sq && !dq && !in_comment && code[i] == ')')
 				pc--;
 		}
 		

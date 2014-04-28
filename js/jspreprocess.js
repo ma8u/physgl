@@ -9,8 +9,24 @@ function js_prefix()
 	
 	str += 'function cos(x) { return(Math.cos(x)); }\n';
 	str += 'function sin(x) { return(Math.sin(x)); }\n';
-	str += 'function tanh(x) { return (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));}\n';
+	str += 'function asin(x) { return(Math.asin(x)); }\n';
+	str += 'function acos(x) { return(Math.acos(x)); }\n';
+	str += 'function arccos(x) { return(Math.acos(x)); }\n';
+	str += 'function arcsin(x) { return(Math.asin(x)); }\n';
 	str += 'function sech(x) { return(2 / (Math.exp(x) + Math.exp(-x)));}\n';
+	str += 'function atan(x) { return(Math.atan(x));}\n';
+	str += 'function atan2(x,y) { return(Math.atan2(x,y));}\n';
+	str += 'function tan(x) { return(Math.tan(x)); }\n';
+	str += 'function sqrt(x) { return(Math.sqrt(x));}\n';
+	str += 'function exp(x) { return(Math.exp(x));}\n';
+	str += 'function csc(x) { return(1/sin(x));}\n';
+	str += 'function sec(x) { return(1/cos(x));}\n'; 
+	str += 'function cot(x) { return(1/tan(x));}\n'; 
+	str += 'function sinh(x) { return (Math.exp(x) - Math.exp(-x)) / 2;}\n';
+	str += 'function cosh(x) { return (Math.exp(x) + Math.exp(-x)) / 2;}\n';
+	str += 'function tanh(x) { return (Math.exp(x) - Math.exp(-x)) / (Math.exp(x) + Math.exp(-x));}\n';
+	str += 'function abs(x) { return(Math.abs(x)); }\n';
+
 	return(str);
 }
 
@@ -28,6 +44,7 @@ function js_find_global_paren_groups(code_in)
 	var pstart;
 	var in_sq = false;
 	var in_dq = false;
+	var in_comment = false;
 	
 	i = 0;
 	while(i < code_in.length)
@@ -36,6 +53,10 @@ function js_find_global_paren_groups(code_in)
 				in_sq = !in_sq;
 			if (code_in[i] == '"') 
 				in_dq = !in_dq;
+			if (i < code_in.length-1 && code_in[i] == '/' && code_in[i+1] == '/')
+				in_comment = true;
+			if (in_comment == true && (code_in[i] == '\n' || code_in[i] == '\r'))
+				in_comment = false;
 			if (code_in[i] == '(' && !in_sq && !in_dq)
 				{
 					pstart.push(i+1);
@@ -58,6 +79,7 @@ function js_split_commas(s)
 {
 	var in_sq = false;
 	var in_dq = false;
+	var in_comment = false;
 	var in_vector = false;
 	var i, guts, start;
 	var comma_pos = [];
@@ -65,15 +87,20 @@ function js_split_commas(s)
 	
 	for(i=0;i<s.length;i++)
 		{
+			
 			if (s[i] == '\'') 
 				in_sq = !in_sq;
 			if (s[i] == '"') 
 				in_dq = !in_dq;
-			if (s[i] == '<' && !in_sq && !in_dq)
+			if (i < s.length-1 && s[i] == '/' && s[i+1] == '/')
+				in_comment = true;
+			if (in_comment == true && (s[i] == '\n' || s[i] == '\r'))
+				in_comment = false;
+			if (s[i] == '<' && !in_sq && !in_dq && !in_comment)
 				in_vector = true;
-			if (s[i] == '>' && !in_sq && !in_dq)
+			if (s[i] == '>' && !in_sq && !in_dq && !in_comment)
 				in_vector = false;
-			if (s[i] == ',' && !in_sq && !in_dq && !in_vector)
+			if (s[i] == ',' && !in_sq && !in_dq && !in_vector && !in_comment)
 				comma_pos.push(i);
 		}
 	
@@ -181,10 +208,22 @@ function js_simple_replace(code_in)
 				i += "Pi".length;
 			}
 			
+			if (!in_dq && !in_sq && look_right_no_ws(code_in,i,"PI"))
+			{
+				code_out += 'Math.PI';
+				i += "PI".length;
+			}
+			
 			if (!in_dq && !in_sq && look_right(code_in,i,"and"))
 				{
 					code_out += ' && ';
 					i += ws_length("and");
+				}
+				
+			if (!in_dq && !in_sq && code_in[i] == '<' && code_in[i+1] == '>')
+				{
+					code_out += ' != ';
+					i += ws_length("<>");
 				}
 				
 			if (!in_dq && !in_sq && look_right(code_in,i,"or"))
@@ -222,6 +261,7 @@ function js_preprocess(code_master)
 {
 	var in_dq = false;
 	var in_sq = false;
+	var in_comment = false;
 	var function_start = false;
 	var in_function_args = false;
 	var if_condition_start;
@@ -246,6 +286,7 @@ function js_preprocess(code_master)
 	
 
 	paren_out = js_handle_parentheses(code_master + '\n');
+	
 	code_in = paren_out.code;
 	
 	while(i < code_in.length)
@@ -257,8 +298,12 @@ function js_preprocess(code_master)
 				in_sq = !in_sq;
 			if (code_in[i] == '"') 
 				in_dq = !in_dq;
+			if (i < code_in.length-1 && code_in[i] == '/' && code_in[i+1] == '/')
+				in_comment = true;
+			if (in_comment == true && (code_in[i] == '\n' || code_in[i] == '\r'))
+				in_comment = false;
 				
-			if (!in_dq && !in_sq)
+			if (!in_dq && !in_sq && !in_comment)
 				{
 					if (look_right(code_in,i,"if"))
 						{
@@ -287,7 +332,10 @@ function js_preprocess(code_master)
 					if (look_right(code_in,i,"end") && in_body_of.last() == 'animate')
 						{
 							in_body_of.pop();
-							code_out += '\n if ('+animate_while_cond+') { clear(); _PHYSGL_frame_count++;}\n}\n_PHYSGL_frame_count = 0;\n__animate_while();\n';
+							code_out += '\n if ('+animate_while_cond+') { clear(); _PHYSGL_frame_count++; _PHYSGL_in_animation_loop = true;} else { _PHYSGL_stop_run();}\n';
+							code_out += '\n if (_PHYSGL_single_step == true) _PHYSGL_pause = true;\n';
+							code_out += '}}\n_PHYSGL_frame_count = 0;\n__animate_while();\n';
+						
 							i += ws_length("end");
 						}
 				
@@ -347,7 +395,9 @@ function js_preprocess(code_master)
 								for_end = code_in.substr(for_last_start,i-for_last_start);
 							if (in_for_limits == 4)
 								for_step = code_in.substr(for_last_start,i-for_last_start);
-							if (parseFloat(for_start) <= parseFloat(for_end))
+							//assume we count up if for_end is a variable
+							
+							if (parseFloat(for_start) <= parseFloat(for_end) || !js_isNumber(for_end.charAt(0)))
 								{
 									if (for_step == '')
 										for_step = 1;
@@ -384,7 +434,7 @@ function js_preprocess(code_master)
 							animate_while_cond = code_in.substr(animate_while_condition_start,i - animate_while_condition_start);
 							animate_while_condition_start = while_condition_start;
 							i += ws_length("animate");
-							code_out += 'function __animate_while()\n{\n';
+							code_out += '_PHYSGL_stop_request = false; function __animate_while()\n{\nif (!_PHYSGL_pause) {\n';
 						}
 							
 					if (look_right(code_in,i,"do") && in_while_condition)
@@ -397,7 +447,9 @@ function js_preprocess(code_master)
 						}
 						
 				
-					if (i && i < code_in.length-1 && code_in[i] == '=' && code_in[i+1] != '=' && code_in[i-1] != '=' && code_in[i-1] != '+' && code_in[i-1] != '-')
+					if (i && i < code_in.length-1 && code_in[i] == '=' && 
+							code_in[i+1] != '=' && code_in[i-1] != '=' && 
+							code_in[i-1] != '+' && code_in[i-1] != '-' && code_in[i-1] != '!' && code_in[i-1] != '<' && code_in[i-1] != '>' )
 						{
 							in_expression = true;
 							expression_start = i+1;
@@ -429,6 +481,7 @@ function js_preprocess(code_master)
 	for(i=paren_out.paren_groups.length-1;i>=0;i--)
 		code_out = code_out.replace(paren_out.paren_groups[i].key,'('+paren_out.paren_groups[i].token+')');
 		
+	console.log(code_out);
 	code_out = js_simple_replace(code_out);
 	return(js_prefix() + code_out);
 	

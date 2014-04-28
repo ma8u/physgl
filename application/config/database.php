@@ -49,9 +49,9 @@ $active_group = 'default';
 $active_record = TRUE;
 
 $db['default']['hostname'] = '127.0.0.1';
-$db['default']['username'] = 'your mysql user name';
-$db['default']['password'] = 'your mysql password';
-$db['default']['database'] = 'physgl'; //leave this or put in your physgl database name
+$db['default']['username'] = 'root';
+$db['default']['password'] = 'physics';
+$db['default']['database'] = 'physgl';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;

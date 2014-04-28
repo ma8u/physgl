@@ -1,9 +1,10 @@
 body {
 	 background-color: #ffffff;
 	 width: 100%;
-	 margin: 0.5cm;
-	 font-family: Lucida Grande, Verdana, Sans-serif;
-	 font-size: 14px;
+	 margin: 0px;
+	 padding: 0px
+	 font-family: Times,Helvetica;
+	 font-size: 12pt;
 	 color: #4F5155;
 }
 
@@ -24,7 +25,6 @@ body {
 h1 {
  color: #444;
  background-color: transparent;
- /*border-bottom: 2px solid #D0D0D0;*/
  font-size: 16pt;
  font-weight: bold;
  margin: 24px 0 2px 0;
@@ -56,17 +56,15 @@ h3 {
 		font-size: 12pt;
 		background: #fafacc;
 		padding: 2px;
-		border: 2px solid;
+		border: 2px gray;
 	}
 	
 #pmode_small
 	{
 		margin: 0px;
-		border: 1px solid #000000;
+		padding: 0px;
 		background-color: #aaaaaa;
 		cursor: crosshair;
-		width: 500px;
-		height: 400px;
 		font-family: Menlo;
 		font-size: 10pt;
 		color: #000000;	
@@ -87,20 +85,12 @@ h3 {
 	
 #dump
 	{
-		 display: none;
+		display: none;
     	visibility: hidden;
     	
 	}
 
-#console
-	{
-		width: 500px;
-		height: 400px;
-		overflow: auto;
-		font-family: Courier;
-		font-size: 12pt;
-		margin-top: 1.5cm;
-	}
+
 	
 
 #graph
@@ -108,6 +98,7 @@ h3 {
 		margin: 0px;
 		width: 500px;
 		height: 500px;
+    	visibility: hidden;
 	}
 	
 #console_link
@@ -131,6 +122,15 @@ h3 {
 		padding: 5px;
 		color: #ff0000;
 		font-size: 10pt;
+	}
+	
+#message
+	{
+		padding: 5px;
+		color: #ffffff;
+		background: #ff0000;
+		font-size: 12pt;
+		display: inline-block;
 	}
 	
 #share
@@ -169,7 +169,7 @@ h3 {
 
 
 .work_space {
-	margin: 10px;
+	margin: 5px;
     overflow: hidden;
     width: 1024px;
 }
@@ -178,6 +178,8 @@ h3 {
     float: left;
     width: auto;
     padding: 5px;
+    position: absolute;
+    z-index: 1;
 }
 
 .work_space .col2 {
@@ -186,7 +188,6 @@ h3 {
     width: auto;
      padding: 5px;
      position: absolute;
-     z-index: -1;
 }
 
 .work_space label {
@@ -195,8 +196,34 @@ h3 {
 
 #wrapper { margin: 0 auto; max-width: 600px; }
 #account_input { font-size: 14pt; background-color: #FFFFCC; }
-#top-bar {position: relative; padding: 0px; min-height: 40px; margin: 0; width: 100%; overflow: hidden; *zoom: 1; }
-#login_line { position: absolute; right: 50px; width: auto; font-size: 10pt;}
+#top-bar 
+	{
+		position: relative; 
+		padding: 5px; 
+		height: 40px; 
+		margin: 0; 
+		width: 100%; 
+		overflow: hidden;  
+		background: #000000;
+		border-bottom: 2px solid #999999;
+	}
+#login_line 
+	{ 
+		position: absolute; 
+		right: 50px; 
+		width: auto; 
+		font-size: 10pt;
+		color: #ffffff;
+		font-family: Helvetica;
+	}
+	
+#nav
+	{
+		text-decoration: none;
+		color: #ffffff;
+		font-family: Helvetica;
+		font-size: 10pt;
+	}
 
 #intro_text
 	{
@@ -209,6 +236,112 @@ h3 {
 	
 #logo
 	{
-		font-size: 28pt;
-		font-family: monospace;
+		font-size: 14pt;
+		color: #ffffff;
+		text-decoration: none;
+		font-family: Helvetica;
 	}
+	
+#narrative_controls
+	{
+		font-size: 8pt;
+		padding: 2px;
+	}
+	
+#edit_narrative
+	{
+		visibility: hidden;
+		display: none;
+	}
+	
+#narrative
+    {
+        font-size: 16pt;
+        margin: 5px;
+        font-family: Times, Helvetica;
+        width: 90%;
+        margin: auto;
+    }
+    
+#slider_labels
+	{
+		font-size: 10pt;
+		font-family: Helvetica;
+	}
+
+
+#slider_text_label
+	{
+		font-size: 12pt;
+		font-family: Helvetica;
+	}
+
+#filemanager
+	{
+		margin-left: 1cm;
+		font-size: 14pt;
+		font-family: Helvetica;
+	}
+	
+#dropbox_buttons
+	{
+		padding: 0px;
+		margin-left: 1cm;
+	}
+
+#button_style
+	{
+		font-size: 14pt;
+	}
+#run_button
+	{
+		
+	}
+	
+#page_outer
+{
+	width: 100%;
+	margin: 0 auto;
+}
+
+#page_inner
+{
+	margin: 0px auto;
+	width: 95%;
+}
+
+
+#code_dialog, #graphics_dialog, #xy_dialog
+{
+	margin: 0px;
+	padding: 0px;
+	width: 500px;
+	height: 500px;
+	overflow: hidden;
+}
+
+#console_dialog
+	{
+		height: 500px;
+		overflow: auto;
+		font-family: Courier;
+		font-size: 12pt;
+		margin-top:0px;
+	}
+
+
+
+.ui-dialog-title{
+  margin: 0px;
+  padding: 0px;
+  font-size: 10pt;
+  font-weight: normal;
+}
+
+.ui-dialog-titlebar 
+{
+	padding: 0px;
+	height: 10px;
+	background: blue;
+}
+

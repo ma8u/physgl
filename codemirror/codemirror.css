@@ -6,12 +6,14 @@
    font-size: 11pt;
   height: 400px;
    background: #ffffcc;
-  border: solid 1px;
+  border: solid 1px darkgray;
+  margin: 0px;
 }
 .CodeMirror-scroll {
   /* Set scrolling behaviour here */
-  overflow: auto;
+  overflow: hidden;
    height: 400px;
+   width: 520px;
 }
 
 /* PADDING */
