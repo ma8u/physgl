@@ -6,6 +6,8 @@ PhysGL is an open-source, 3D graphics scripting langauge and programming environ
 <a href=http://www.khronos.org/webgl/wiki/Getting_a_WebGL_Implementation>WebGL-enabled browser</a> and allows you to easily experiment with 3D graphics, drawing and animation.    It has been used to teach beginning programming, mathematics, physics, and art in the context of computer graphics
 and animation.  
 <p/>
+We started writing a (free) <a href=http://www.physgl.org/book/physgl_book.pdf target="_blank">book</a> about using PhysGL to study physics.
+<p/>
 Here are some examples:
 <span style="font-size: 12pt;">
 <a href="javascript:void(0);" onClick="example(0);">Red sphere</a>, 
@@ -109,6 +111,7 @@ function example(n)
 			case 20:
 				code = 's%3D0%0Awhile%20true%20animate%0A%09new_spline%28%29%0A%09zoom%20%3D%2030*sin%28s%29%0A%09for%20t%3D0%2C10%2C0.1%20do%0A%09%09add_spline%28zoom*%3Csin%28t%29+2*sin%282*t%29%2Ccos%28t%29-2*cos%282*t%29%2C-sin%283*t%29%3E%29%0A%09end%0A%09draw_spline%28%22red%22%2C3%2C10%29%0A%09s%3Ds+0.1%0Aend%0A';
 				break;
+			}
 		}
 		
 	myCodeMirror.setValue(unescape(code));

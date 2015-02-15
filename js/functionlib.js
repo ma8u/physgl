@@ -79,7 +79,7 @@ function new_slider(name,min,max,step,value)
 	var cur;
 	
 	cur = $(_PHYSGL_interact).html();
-	cur = cur + '<span id="slider_text_label">'+name + ': </span><span id="slider_labels">'+min+'</span> <input type=\"range\" id=\"slider_'+name+'\" min='+min+' max='+max+' step='+step+' value='+value+'> <span id="slider_labels">'+max+'</span><br/>';
+	cur = cur + '<span id="slider_text_label">'+name + ': </span><span id="slider_labels">'+min+'</span> <input type=\"range\" id=\"slider_'+name+'\" min='+min+' max='+max+' step='+step+' value='+value+' onchange=\'$(\"#sliderval_'+name+'\").html("("+this.value+")")\'> <span id="slider_labels">'+max+'</span> <span id="slider_labels"><span id=\"sliderval_'+name+'\">'+'('+value+')'+'</span></span><br/>';
 	$(_PHYSGL_interact).html(cur);
 }
 

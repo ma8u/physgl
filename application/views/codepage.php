@@ -177,7 +177,7 @@ $(document).ready(function() {
 																										"minimize": function() { run_button_to_top(); }
 																									});	
 	
-    $('#code_dialog').dialog('option','resize',function() { myCodeMirror.setSize($(this).width(),$(this).height());});
+    $('#code_dialog').dialog('option','resize',function() {  myCodeMirror.setSize($(this).width(),$(this).height()); myCodeMirror.refresh(); });
    
    	$('#code_dialog').dialog('option','drag',function(event) { var offset = $('#run_button').height() + $('.ui-dialog-title').height() + $('.ui-dialog-titlebar').height() + 6; $('#run_button').offset({top: $(this).offset().top-offset,left: $(this).offset().left})});
 	
@@ -199,7 +199,7 @@ $(document).ready(function() {
   	desktop(['edit','graphics','xy','console']);
     show_narrative(false);
 	programming_buttons('stopped');
-	myCodeMirror = CodeMirror.fromTextArea(code_editor,{lineNumbers: true,matchBrackets: true, onKeyEvent: key_pressed_in_code,<?php echo $layout['code_mirror']; ?>});
+	myCodeMirror = CodeMirror.fromTextArea(code_editor,{lineNumbers: true,matchBrackets: true, onKeyEvent: key_pressed_in_code,viewportMargin: Infinity, cursorScrollMargin: 10,<?php echo $layout['code_mirror']; ?>});
 	<?php echo $layout['code_mirror_css']; ?>
 	initial_code = '<?php echo addslashes($code); ?>';
 	myCodeMirror.setValue(unescape(decodeURIComponent(initial_code)));
@@ -323,6 +323,8 @@ function run(where,single_step)
 	o3d = [];
 	code = myCodeMirror.getValue();
 	var dest, width, height;
+	var i;
+	var tcode;
 	
 	_PHYSGL_pause = false;
 	_PHYSGL_single_step = false;
@@ -360,9 +362,25 @@ function run(where,single_step)
 	clear_console();
 	clear_sliders();
 	programming_buttons('running');
+	//console.error = function(msg) { $('#error_message').html(msg);};
 	
 	$('#console').css('border','0px');
 	$('#save_update').html('Saved.');
+	
+	$('#error_message').html('');
+			
+	tcode = code;
+	for(i=0;i<tcode.length;i++)
+		{
+			if (tcode.charCodeAt(i) > 128)
+				tcode = tcode.substr(0,i) + '$' + tcode.substr(i+1);
+		}
+	if (tcode != code)
+		{
+			myCodeMirror.setValue(tcode);
+			$('#error_message').html('You have unicode character(s) in your code. They have been replaced by $-signs. Please fix them');
+			return;
+		}
 	
 	dest = '#pmode_small';
 	width = 500;
@@ -373,7 +391,7 @@ function run(where,single_step)
 			if (where == 'small')
 				_PHYSGL_interact = '#interact_small';
 			else _PHYSGL_interact = '#interact_large';
-			$('#error_message').html('');
+			
 			code = js_preprocess(code);
 			console.log(code);
 			//return;

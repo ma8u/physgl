@@ -1,6 +1,6 @@
 function ToPrefix_is_operator(c)
 {
-	return('/*+-^'.indexOf(c) != -1);
+	return('/*+-^<>='.indexOf(c) != -1);
 }
 
 function ToPrefix_is_white(c)
@@ -175,7 +175,10 @@ function ToPrefix_power(x,y)
 		return(Math.pow(x,y));
 	if (ToPrefix_isVector(x) && y == '2')
 		return(x[0] * x[0] + x[1] * x[1] + x[2] * x[2]);
-	else return({result: 'Exponents may only be taken of scalars.', type: 'error'});
+	if (ToPrefix_isVector(x)) x = '&lt;'+x+'&gt;';
+	if (ToPrefix_isVector(y)) y = '&lt;'+y+'&gt;';
+	_PHYSGL_error_message('You cannot do '+x+'<sup>'+y+'</sup>. Exponents may only be taken of scalars.');
+	return({result: 'Exponents may only be taken of scalars.', type: 'error'});
 }
 
 function ToPrefix_add(x,y)
@@ -184,7 +187,10 @@ function ToPrefix_add(x,y)
 		return(x+y);
 	if (ToPrefix_isVector(x) && ToPrefix_isVector(y))
 		return([x[0]+y[0],x[1]+y[1],x[2]+y[2]]);
-	return('You cannot add a vector and a scalar in '+x+' and ' + y+'.');
+	if (ToPrefix_isVector(x)) x = '&lt;'+x+'&gt;';
+	if (ToPrefix_isVector(y)) y = '&lt;'+y+'&gt;';
+	_PHYSGL_error_message('You cannot add a vector and a scalar in '+x+' and ' + y+'.');
+	return({result: 'You cannot add a vector and a scalar in '+x+' and ' + y+'.',type: 'error'});
 }
 
 function ToPrefix_subtract(x,y)
@@ -193,7 +199,10 @@ function ToPrefix_subtract(x,y)
 		return(x-y);
 	if (ToPrefix_isVector(x) && ToPrefix_isVector(y))
 		return([x[0]-y[0],x[1]-y[1],x[2]-y[2]]);
-	return('You cannot subtract a vector and a scalar.');
+	if (ToPrefix_isVector(x)) x = '&lt;'+x+'&gt;';
+	if (ToPrefix_isVector(y)) y = '&lt;'+y+'&gt;';
+	_PHYSGL_error_message('You cannot subtract a vector and a scalar.');
+	return({result: 'You cannot subtract a vector and a scalar.',type: 'error'});
 }
 
 function ToPrefix_multiply(x,y)
@@ -206,7 +215,10 @@ function ToPrefix_multiply(x,y)
 		return([y[0]*x,y[1]*x,y[2]*x]);
 	if (ToPrefix_isVector(x) && ToPrefix_isVector(y))
 		return(x[0]*y[0]+x[1]*y[1]+x[2]*y[2]);
-	return('You cannot mutiply '+x+' and '+y+' as shown.');
+	if (ToPrefix_isVector(x)) x = '&lt;'+x+'&gt;';
+	if (ToPrefix_isVector(y)) y = '&lt;'+y+'&gt;';
+	_PHYSGL_error_message('You cannot mutiply '+x+' and '+y+' as shown.');
+	return({result: 'You cannot mutiply '+x+' and '+y+' as shown.',type: 'error'});
 }
 
 function ToPrefix_divide(x,y)
@@ -216,10 +228,10 @@ function ToPrefix_divide(x,y)
 	if (ToPrefix_isVector(x) && ToPrefix_isScalar(y))
 		return([x[0]/y,x[1]/y,x[2]/y]);
 	if (ToPrefix_isScalar(x) && ToPrefix_isVector(y))
-		return('You cannot divide a scalar by a vector');
+		_PHYSGL_error_message('You cannot divide a scalar by a vector as in '+x+' / &lt;'+y+'&gt;');
 	if (ToPrefix_isVector(x) && ToPrefix_isVector(y))
-		return('You cannot divide two vectors.');
-	return('You cannot divide '+x+' and '+y+' as shown.');
+		_PHYSGL_error_message('You cannot divide two vectors as in &lt;'+x+'&gt; / &lt;'+y+'&gt;');
+	return({result: 'You cannot divide '+x+' and '+y+' as shown.',type: 'error'});
 }
 
 //see if a function name exists to the left of an open (
@@ -376,6 +388,7 @@ function Infix_to_Prefix(s)
 	var key;
 	var replacer;
 	var i;
+	var parts;
 
 
 	main_vect = ToPrefix_token_vectors({expr: s,vect: []});
@@ -405,6 +418,11 @@ function Infix_to_Prefix(s)
 	for(i=0;i<main_vect.vect.length;i++)
 		{
 			key = '__vect'+i;
+			parts = main_vect.vect[i].split(",");
+			parts[0] = Infix_to_Prefix(parts[0]);
+			parts[1] = Infix_to_Prefix(parts[1]);
+			parts[2] = Infix_to_Prefix(parts[2]);
+			main_vect.vect[i] = parts.join(",");
 			main_prefix = main_prefix.replace(key,'['+main_vect.vect[i]+']');
 		}
 	

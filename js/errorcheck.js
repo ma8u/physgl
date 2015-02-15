@@ -1,3 +1,8 @@
+function _PHYSGL_error_message(str)
+{
+	$('#error_message').html(str);
+}
+
 function _PHYSGL_paren_balance(code)
 {
 	var dq = false, sq = false, pc = 0;

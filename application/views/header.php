@@ -97,6 +97,7 @@ if ($login_form == 'no')
  | <a href=http://www.physgl.org/tutorial target="_blank" id="nav">Tutorial</a>
  | <?php echo anchor("welcome/about","About",Array("id" => "nav")); ?>
  | <a href="https://groups.google.com/forum/#!forum/physgl-site" id="nav">Group</a>
+ | <a href=http://www.physgl.org/book/physgl_book.pdf target="_blank" id="nav">Book</a>
 <?php
 	if ($login_form == 'yes')
 		echo form_close();
